@@ -1,4 +1,4 @@
-module github.com/booking-eco/Booking-go-shared
+module github.com/PdxFullStack/Booking-go-shared
 
 go 1.24.0
 

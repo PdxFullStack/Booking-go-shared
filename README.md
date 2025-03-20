@@ -2,16 +2,20 @@
 
 This repository contains shared Go packages for the Booking Eco microservices ecosystem.
 
+## Installation
+
+```bash
+go get github.com/PdxFullStack/Booking-go-shared
+```
+
 ## Packages
 
 ### Auth Middleware
 
 The auth middleware provides JWT token verification using asymmetric encryption (RS256). It verifies tokens issued by the authentication service using the public key provided in the consuming application's environment variables.
 
-## Installation
-
-```bash
-go get booking-eco/shared
+```go
+import "github.com/PdxFullStack/Booking-go-shared/middleware/auth"
 ```
 
 ## Usage
@@ -27,7 +31,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"booking-eco/shared/middleware/auth"
+	"github.com/PdxFullStack/Booking-go-shared/middleware/auth"
 )
 
 func main() {
@@ -99,6 +103,16 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
     
     fmt.Fprintf(w, "User: %s, Email: %s", claims.UserID, claims.Email)
 }
+```
+
+## Import Paths
+
+Here are the import paths for all available packages:
+
+```go
+
+// Authentication middleware
+import "github.com/PdxFullStack/Booking-go-shared/middleware/auth"
 ```
 
 ## Security Considerations

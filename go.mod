@@ -1,5 +1,7 @@
 module github.com/PdxFullStack/Booking-go-shared
 
-go 1.24.0
+// v0.0.3
+
+go 1.21
 
 require github.com/golang-jwt/jwt/v5 v5.2.1

@@ -1,3 +1,6 @@
+// Package auth provides JWT authentication middleware for Go HTTP services.
+// It implements token verification using RS256 (RSA) signatures and supports
+// scope-based authorization.
 package auth
 
 import (
@@ -30,14 +33,16 @@ type Config struct {
 	// PublicKeyEnv is the environment variable name containing the JWT public key in PEM format
 	PublicKeyEnv string
 
-	// Required scopes (if any)
+	// RequiredScopes contains a list of OAuth scopes that must be present in the token
 	RequiredScopes []string
 
-	// Optional function to extract the token from the request
+	// TokenExtractor is a function that extracts the token from the request
+	// If not provided, ExtractTokenFromHeader will be used by default
 	TokenExtractor func(r *http.Request) (string, error)
 }
 
 // DefaultConfig returns a default middleware configuration
+// with standard settings for JWT verification.
 func DefaultConfig() Config {
 	return Config{
 		PublicKeyEnv:   DefaultPublicKeyEnv,
@@ -47,6 +52,7 @@ func DefaultConfig() Config {
 }
 
 // JWTClaims holds the JWT claims with additional custom fields
+// for user ID, email, and authorization scopes.
 type JWTClaims struct {
 	UserID string   `json:"user_id"`
 	Email  string   `json:"email"`
@@ -55,6 +61,7 @@ type JWTClaims struct {
 }
 
 // Middleware returns an HTTP middleware that verifies JWT tokens
+// and adds the claims to the request context if the token is valid.
 func Middleware(config Config) func(http.Handler) http.Handler {
 	// If no config is provided, use the default
 	if config.PublicKeyEnv == "" {
@@ -112,7 +119,8 @@ func Middleware(config Config) func(http.Handler) http.Handler {
 	}
 }
 
-// ExtractTokenFromHeader extracts a JWT token from the Authorization header
+// ExtractTokenFromHeader extracts a JWT token from the Authorization header.
+// Returns an error if the header is missing or malformed.
 func ExtractTokenFromHeader(r *http.Request) (string, error) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
@@ -127,7 +135,8 @@ func ExtractTokenFromHeader(r *http.Request) (string, error) {
 	return parts[1], nil
 }
 
-// GetClaims retrieves JWT claims from context
+// GetClaims retrieves JWT claims from the context
+// Returns an error if claims are not found in the context
 func GetClaims(ctx context.Context) (*JWTClaims, error) {
 	claims, ok := ctx.Value(ClaimsContextKey).(*JWTClaims)
 	if !ok {
